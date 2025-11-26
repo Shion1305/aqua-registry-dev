@@ -1,0 +1,89 @@
+name: Test aqua package
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux amd64
+          - os: linux
+            arch: amd64
+            runner: ubuntu-latest
+          # Linux arm64
+          - os: linux
+            arch: arm64
+            runner: ubuntu-latest-arm64
+          # macOS amd64
+          - os: darwin
+            arch: amd64
+            runner: macos-13
+          # macOS arm64
+          - os: darwin
+            arch: arm64
+            runner: macos-latest
+          # Windows amd64
+          - os: windows
+            arch: amd64
+            runner: windows-latest
+          # Windows 386
+          - os: windows
+            arch: "386"
+            runner: windows-latest
+          # Windows arm64
+          - os: windows
+            arch: arm64
+            runner: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
+        with:
+          aqua_version: v2.43.1
+
+      - name: Install tree via aqua
+        shell: bash
+        run: |
+          aqua install
+
+      - name: Verify tree installation
+        shell: bash
+        run: |
+          tree --version
+          tree --help
+
+      - name: Test tree functionality
+        shell: bash
+        run: |
+          mkdir -p test_dir/subdir1/subdir2
+          echo "test file" > test_dir/file1.txt
+          echo "test file 2" > test_dir/subdir1/file2.txt
+          tree test_dir
+
+      - name: Check binary architecture (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          which tree
+          file $(which tree) || true
+          
+      - name: Check binary architecture (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-Command tree
+          (Get-Command tree).Path
+
