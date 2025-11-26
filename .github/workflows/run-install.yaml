@@ -13,6 +13,8 @@ jobs:
   test:
     name: Test on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.runner }}
+    env:
+      AQUA_DISABLE_POLICY: true
     strategy:
       fail-fast: false
       matrix:
