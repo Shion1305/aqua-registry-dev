@@ -2,39 +2,67 @@ packages:
   - type: github_release
     repo_owner: peteretelej
     repo_name: tree
-    description: An open-source cross-platform tree cli implemented in Rust
+    description: tree is an open-source cross-platform tree cli implemented in Rust
     version_constraint: "false"
     version_overrides:
+      - version_constraint: Version == "0.1.1"
+        asset: tree_{{.Version}}_{{.Arch}}-{{.OS}}.{{.Format}}
+        format: zip
+        rosetta2: true
+        windows_arm_emulation: true
+        replacements:
+          amd64: x86_64
+          darwin: apple-darwin
+          linux: unknown-linux-musl
+          windows: pc-windows-gnu
+        checksum:
+          type: github_release
+          asset: tree_{{.Version}}_{{.Arch}}-{{.OS}}.tar.gz.sha256sum
+          algorithm: sha256
+        overrides:
+          - goos: linux
+            format: tar.gz
+        supported_envs:
+          - darwin
+          - windows
+          - amd64
+      - version_constraint: semver("<= 0.1.4")
+        asset: tree_{{.Version}}_{{.Arch}}-{{.OS}}.{{.Format}}
+        format: zip
+        rosetta2: true
+        windows_arm_emulation: true
+        replacements:
+          amd64: x86_64
+          darwin: apple-darwin
+          linux: unknown-linux-musl
+          windows: Windows
+        checksum:
+          type: github_release
+          asset: tree_{{.Version}}_{{.OS}}_{{.Arch}}.zip.sha256sum
+          algorithm: sha256
+        overrides:
+          - goos: linux
+            format: tar.gz
+          - goos: windows
+            asset: tree_{{.Version}}_{{.OS}}_{{.Arch}}.{{.Format}}
+            replacements:
+              amd64: 64bit
+        supported_envs:
+          - darwin
+          - windows
+          - amd64
       - version_constraint: "true"
         asset: tree-{{.Version}}-{{.OS}}-{{.Arch}}.{{.Format}}
         format: tar.gz
         replacements:
-          amd64: amd64
-          arm64: arm64
           darwin: macOS
           linux: Linux
           windows: Windows
-        checksum:
-          enabled: true
-          type: github_release
-          asset: tree-{{.Version}}-{{.OS}}-{{.Arch}}.{{.Format}}
-          algorithm: sha256
         overrides:
           - goos: windows
             format: zip
-            asset: tree-{{.Version}}-{{.OS}}-{{.Arch}}.{{.Format}}
             replacements:
               amd64: 64bit
-              "386": 32bit
-              arm64: arm64
-        supported_envs:
-          - linux/amd64
-          - linux/arm64
-          - darwin/amd64
-          - darwin/arm64
-          - windows/amd64
-          - windows/386
-          - windows/arm64
   - type: http
     repo_owner: helm
     repo_name: helm
