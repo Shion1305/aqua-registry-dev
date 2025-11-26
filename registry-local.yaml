@@ -1,0 +1,65 @@
+packages:
+  - type: github_release
+    repo_owner: peteretelej
+    repo_name: tree
+    description: An open-source cross-platform tree cli implemented in Rust
+    version_constraint: "false"
+    version_overrides:
+      - version_constraint: "true"
+        asset: tree-{{.Version}}-{{.OS}}-{{.Arch}}.{{.Format}}
+        format: tar.gz
+        replacements:
+          amd64: amd64
+          arm64: arm64
+          darwin: macOS
+          linux: Linux
+          windows: Windows
+        checksum:
+          enabled: true
+          type: github_release
+          asset: tree-{{.Version}}-{{.OS}}-{{.Arch}}.{{.Format}}
+          algorithm: sha256
+        overrides:
+          - goos: windows
+            format: zip
+            asset: tree-{{.Version}}-{{.OS}}-{{.Arch}}.{{.Format}}
+            replacements:
+              amd64: 64bit
+              "386": 32bit
+              arm64: arm64
+        supported_envs:
+          - linux/amd64
+          - linux/arm64
+          - darwin/amd64
+          - darwin/arm64
+          - windows/amd64
+          - windows/386
+          - windows/arm64
+  - type: http
+    repo_owner: helm
+    repo_name: helm
+    url: https://get.helm.sh/helm-{{.Version}}-{{.OS}}-{{.Arch}}.tar.gz
+    description: The Kubernetes Package Manager
+    files:
+      - name: helm
+        src: "{{.OS}}-{{.Arch}}/helm"
+    supported_envs:
+      - darwin
+      - linux
+      - amd64
+    checksum:
+      type: http
+      url: "{{.AssetURL}}.sha256sum"
+      file_format: regexp
+      algorithm: sha256
+      pattern:
+        checksum: ^(\b[A-Fa-f0-9]{64}\b)
+        file: "^\\b[A-Fa-f0-9]{64}\\b\\s+(\\S+)$"
+  - type: go_install
+    path: github.com/anqiansong/github-compare
+    description: A GitHub repositories statistics command-line tool for the terminal
+  - type: go_install
+    repo_owner: katbyte
+    repo_name: terrafmt
+    description: Format terraform blocks embedded in files
+

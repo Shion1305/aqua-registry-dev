@@ -1,0 +1,8 @@
+---
+registries:
+- type: local
+  name: local
+  path: registry-local.yaml
+packages:
+- name: peteretelej/tree@v1.2.2
+  registry: local
